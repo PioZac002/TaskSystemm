@@ -1,0 +1,10 @@
+# Environment
+.env
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Frontend and backend keep their own .gitignore files for build output

@@ -1,0 +1,963 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./styles/arcade.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Arcade Cabinet world. Light = the printed instruction card on the cabinet, dark = the phosphor screen. */
+  --color-primary: #1d46d1;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #eff0f4;
+  --color-secondary-foreground: #0f1020;
+
+  --color-background: #fcfcfd;
+  --color-foreground: #0f1020;
+
+  --color-muted: #eff0f4;
+  --color-muted-foreground: #4b5063;
+
+  --color-accent: #e4ebff;
+  --color-accent-foreground: #0d2d8f;
+
+  --color-destructive: #c81e3a;
+  --color-destructive-foreground: #ffffff;
+
+  --color-success: #15803d;
+  --color-success-foreground: #ffffff;
+
+  --color-warning: #b45309;
+  --color-warning-foreground: #ffffff;
+
+  --color-border: #cdd0da;
+  --color-input: #9da2b3;
+  --color-ring: #1d46d1;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #0f1020;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f1020;
+
+  /* Pixel geometry: square tiles; chamfers come from .px-* primitives in arcade.css */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius: 0px;
+
+  --font-pixel: "Pixelify Sans", ui-monospace, monospace;
+  --font-hud: "Silkscreen", ui-monospace, monospace;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Dark mode: the phosphor screen */
+.dark {
+  --color-background: #07060d;
+  --color-foreground: #f2f1fa;
+  --color-card: #0e0c1f;
+  --color-card-foreground: #f2f1fa;
+  --color-muted: #17153a;
+  --color-muted-foreground: #a6a3c9;
+  --color-border: #2b2a63;
+  --color-input: #403e86;
+  --color-popover: #0e0c1f;
+  --color-popover-foreground: #f2f1fa;
+  --color-primary: #2456e8;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #1a1745;
+  --color-accent-foreground: #7fe7f2;
+  --color-secondary: #17153a;
+  --color-secondary-foreground: #f2f1fa;
+  --color-destructive: #e0283a;
+  --color-success: #36d15a;
+  --color-success-foreground: #04130a;
+  --color-warning: #ffb020;
+  --color-warning-foreground: #1a1000;
+  --color-ring: #33d6e8;
+}
+
+/* The primary fill is too dim to read as text on the dark screen */
+.dark .text-primary {
+  color: #7da2ff;
+}
+
+/* Custom Utilities dla Tailwind v4 */
+@layer utilities {
+  /* Typography colors */
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-primary-foreground {
+    color: var(--color-primary-foreground);
+  }
+
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+
+  .text-secondary-foreground {
+    color: var(--color-secondary-foreground);
+  }
+
+  .text-muted {
+    color: var(--color-muted);
+  }
+
+  .text-muted-foreground {
+    color: var(--color-muted-foreground);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-accent-foreground {
+    color: var(--color-accent-foreground);
+  }
+
+  .text-destructive {
+    color: var(--color-destructive);
+  }
+
+  .text-success {
+    color: var(--color-success);
+  }
+
+  .text-warning {
+    color: var(--color-warning);
+  }
+
+  .text-foreground {
+    color: var(--color-foreground);
+  }
+
+  /* Background colors */
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+
+  .bg-primary\/90 {
+    background-color: color-mix(in srgb, var(--color-primary) 90%, transparent);
+  }
+
+  .bg-primary\/80 {
+    background-color: color-mix(in srgb, var(--color-primary) 80%, transparent);
+  }
+
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
+
+  .bg-secondary\/80 {
+    background-color: color-mix(in srgb, var(--color-secondary) 80%, transparent);
+  }
+
+  .bg-muted {
+    background-color: var(--color-muted);
+  }
+
+  .bg-muted\/80 {
+    background-color: color-mix(in srgb, var(--color-muted) 80%, transparent);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .bg-accent\/50 {
+    background-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  }
+
+  .bg-accent\/80 {
+    background-color: color-mix(in srgb, var(--color-accent) 80%, transparent);
+  }
+
+  .bg-destructive {
+    background-color: var(--color-destructive);
+  }
+
+  .bg-destructive\/80 {
+    background-color: color-mix(in srgb, var(--color-destructive) 80%, transparent);
+  }
+
+  .bg-success {
+    background-color: var(--color-success);
+  }
+
+  .bg-success\/80 {
+    background-color: color-mix(in srgb, var(--color-success) 80%, transparent);
+  }
+
+  .bg-success\/90 {
+    background-color: color-mix(in srgb, var(--color-success) 90%, transparent);
+  }
+
+  .bg-warning {
+    background-color: var(--color-warning);
+  }
+
+  .bg-warning\/80 {
+    background-color: color-mix(in srgb, var(--color-warning) 80%, transparent);
+  }
+
+  .bg-card {
+    background-color: var(--color-card);
+  }
+
+  .bg-card\/80 {
+    background-color: color-mix(in srgb, var(--color-card) 80%, transparent);
+  }
+
+  .bg-card\/50 {
+    background-color: color-mix(in srgb, var(--color-card) 50%, transparent);
+  }
+
+  .bg-background {
+    background-color: var(--color-background);
+  }
+
+  .bg-popover {
+    background-color: var(--color-popover);
+  }
+
+  /* Border colors */
+  .border-border {
+    border-color: var(--color-border);
+  }
+
+  .border-border\/50 {
+    border-color: color-mix(in srgb, var(--color-border) 50%, transparent);
+  }
+
+  .border-input {
+    border-color: var(--color-input);
+  }
+
+  .border-card {
+    border-color: var(--color-card);
+  }
+
+  /* Ring colors */
+  .ring-ring {
+    --tw-ring-color: var(--color-ring);
+  }
+
+  .ring-offset-background {
+    --tw-ring-offset-color: var(--color-background);
+  }
+
+  /* Shadows */
+  .shadow-glow {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+
+  .shadow-input {
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.55) inset,
+      0 1px 2px rgba(15, 23, 42, 0.08),
+      0 8px 24px rgba(15, 23, 42, 0.06);
+  }
+
+  /* Gradients */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+
+  .animate-accordion-down {
+    animation: accordion-down 0.2s ease-out;
+  }
+
+  .animate-accordion-up {
+    animation: accordion-up 0.2s ease-out;
+  }
+
+  .animate-slide-in-up {
+    animation: slide-in-up 0.5s ease-out;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-nav-in {
+    animation: nav-in 0.5s ease-out forwards;
+  }
+}
+
+/* Keyframes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nav-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-10px);
+  }
+  75% {
+    transform: translateY(-15px) translateX(5px);
+  }
+}
+
+/* Global styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Layered so Tailwind border-color utilities (border-transparent, hover:border-*) still apply */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+}
+
+html,
+body,
+#root {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  letter-spacing: 0;
+}
+
+.auth-page {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--color-background) 86%, white) 0%, var(--color-background) 52%, color-mix(in srgb, var(--color-accent) 45%, var(--color-background)) 100%);
+}
+
+.gooey-input__liquid {
+  filter: url("#gooey-input-filter");
+}
+
+.gooey-input__blob {
+  position: absolute;
+  top: 50%;
+  height: 2.75rem;
+  width: 2.75rem;
+  border-radius: 9999px;
+  opacity: 0.42;
+  transform: translateY(-50%);
+  transition: opacity 240ms ease;
+}
+
+.gooey-input__blob--one {
+  left: 0.4rem;
+  background: color-mix(in srgb, var(--color-primary) 38%, transparent);
+  animation: gooey-input-one 7s ease-in-out infinite;
+}
+
+.gooey-input__blob--two {
+  right: 0.6rem;
+  background: color-mix(in srgb, var(--color-success) 34%, transparent);
+  animation: gooey-input-two 8s ease-in-out infinite;
+}
+
+.gooey-input:focus-within .gooey-input__blob {
+  opacity: 0.68;
+}
+
+.project-flip-card {
+  width: 100%;
+  min-height: 18rem;
+  cursor: pointer;
+  perspective: 1400px;
+}
+
+.project-flip-card:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-lg);
+}
+
+.project-flip-card__inner {
+  position: relative;
+  min-height: inherit;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 360ms steps(8, end);
+}
+
+.project-flip-card__face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.project-flip-card__back {
+  transform: rotateY(180deg);
+}
+
+.project-flip-card.is-flipped .project-flip-card__inner {
+  transform: rotateY(180deg);
+}
+
+.notification-dock {
+  animation: notification-dock-in 280ms ease-out;
+}
+
+.notification-card {
+  animation: notification-card-in 240ms ease-out;
+}
+
+
+/* Dashboard: layout swap between Default / Custom / Jira-like */
+.dash-swap {
+  animation: dash-swap-in 200ms var(--ease-out);
+}
+
+@keyframes dash-swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.stateful-label {
+  animation: stateful-label-in 150ms var(--ease-out);
+}
+
+@keyframes stateful-label-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes notification-dock-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes notification-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Pages that run edge to edge (Board, Teams) cancel the padding of .app-main and
+   fill it exactly, so their own header and footer sit on the viewport edges.
+   Width and height are explicit: the mobile clamp below caps everything else at
+   100% of the padded content box, which would leave a dead strip on the right. */
+.app-bleed {
+  width: calc(100% + 2rem);
+  max-width: calc(100% + 2rem);
+  height: calc(100% + 2rem);
+  margin: -1rem;
+}
+
+@media (min-width: 768px) {
+  .app-bleed {
+    width: calc(100% + 4rem);
+    max-width: calc(100% + 4rem);
+    height: calc(100% + 4rem);
+    margin: -2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-main > *:not(.app-bleed) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .project-flip-card {
+    min-height: 17rem;
+  }
+
+  .project-flip-card__face .p-5 {
+    padding: 1rem;
+  }
+}
+
+@keyframes gooey-input-one {
+  0%, 100% {
+    transform: translate(0, -50%) scale(0.9);
+  }
+  50% {
+    transform: translate(7.5rem, -50%) scale(1.08);
+  }
+}
+
+@keyframes gooey-input-two {
+  0%, 100% {
+    transform: translate(0, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-6.75rem, -50%) scale(0.92);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   UI ENHANCEMENTS — desktop-focused animations
+   ═══════════════════════════════════════════════ */
+
+
+/* ─── Logo Text Hover Color (desktop only) ─── */
+@media (min-width: 768px) {
+  .logo-text-wrap { cursor: default; }
+  .logo-text-main {
+    display: block;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    color: var(--color-foreground);
+  }
+  .logo-text-fill { display: none; }
+  .logo-text-wrap:hover .logo-text-main {
+    color: #7c3aed;
+    text-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+  }
+}
+
+/* ─── Sidebar Nav Icon — subtle scale animation (desktop only) ─── */
+@media (min-width: 768px) {
+  .sidebar-nav-icon {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    flex-shrink: 0;
+  }
+  .sidebar-nav-item:hover .sidebar-nav-icon {
+    transform: scale(1.15) translateX(1px);
+  }
+}
+
+/* ─── Board Card Title Tooltip (desktop only) ─── */
+@media (min-width: 768px) {
+  .board-tip-wrap {
+    position: relative;
+  }
+  .board-tip {
+    pointer-events: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    background: rgba(10, 10, 16, 0.96);
+    color: #f3f4f6;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.5;
+    padding: 7px 11px;
+    border-radius: 7px;
+    white-space: normal;
+    max-width: 210px;
+    min-width: 80px;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 60;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.07);
+    text-align: center;
+    word-break: break-word;
+  }
+  .board-tip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(10, 10, 16, 0.96);
+  }
+  .board-tip-wrap:hover .board-tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ─── Dashboard Flip Cards — dark design (desktop only) ─── */
+@media (min-width: 768px) {
+  .fp-card {
+    overflow: visible;
+    width: 100%;
+    height: 260px;
+  }
+  .fp-content {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 350ms ease;
+    box-shadow: 0 0 14px 2px rgba(0,0,0,0.7);
+    border-radius: 8px;
+  }
+  .fp-card:hover .fp-content { transform: rotateY(180deg); }
+
+  .fp-front, .fp-back {
+    background-color: #111120;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  /* BACK — default visible, project summary with spinning border */
+  .fp-back {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .fp-back::before {
+    position: absolute;
+    content: '';
+    display: block;
+    width: 170px;
+    height: 170%;
+    background: linear-gradient(90deg, transparent, #7c3aed, #a855f7, #7c3aed, transparent);
+    animation: fp-rotation 5000ms infinite linear;
+  }
+  .fp-back-content {
+    position: absolute;
+    width: 99%;
+    height: 99%;
+    background-color: #111120;
+    border-radius: 7px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    text-align: center;
+  }
+  .fp-back-title {
+    font-size: 14px;
+    font-weight: 700;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .fp-back-stats {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    display: flex;
+    gap: 12px;
+  }
+  .fp-back-progress {
+    width: 80%;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .fp-back-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7c3aed, #a855f7);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  /* FRONT — hover visible, floating circles + issues */
+  .fp-front { transform: rotateY(180deg); color: white; }
+  .fp-img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  .fp-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: #7c3aed;
+    position: relative;
+    filter: blur(16px);
+    animation: fp-float 2600ms infinite linear;
+  }
+  .fp-circ-r {
+    background-color: #5b21b6;
+    left: 50px;
+    top: 0;
+    width: 150px;
+    height: 150px;
+    animation-delay: -800ms;
+  }
+  .fp-circ-b {
+    background-color: #a855f7;
+    left: 130px;
+    top: -60px;
+    width: 40px;
+    height: 40px;
+    animation-delay: -1800ms;
+  }
+  .fp-front-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .fp-badge {
+    background-color: rgba(0,0,0,0.55);
+    padding: 2px 10px;
+    border-radius: 10px;
+    backdrop-filter: blur(2px);
+    font-size: 11px;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  .fp-description {
+    box-shadow: 0 0 10px 5px rgba(0,0,0,0.5);
+    width: 100%;
+    padding: 8px 10px;
+    background-color: rgba(0,0,0,0.65);
+    backdrop-filter: blur(5px);
+    border-radius: 6px;
+  }
+  .fp-title-row {
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
+    color: rgba(255,255,255,0.95);
+  }
+  .fp-issue-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    overflow: hidden;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px 5px;
+    border-radius: 4px;
+    text-align: left;
+    color: rgba(255,255,255,0.75);
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .fp-issue-row:hover {
+    color: white;
+    background: rgba(255,255,255,0.12);
+  }
+  .fp-issue-key {
+    font-family: monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+  }
+  .fp-issue-title {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .fp-card-footer {
+    color: rgba(255,255,255,0.45);
+    margin-top: 5px;
+    font-size: 11px;
+  }
+}
+@keyframes fp-rotation {
+  0% { transform: rotateZ(0deg); }
+  100% { transform: rotateZ(360deg); }
+}
+@keyframes fp-float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(10px); }
+  100% { transform: translateY(0px); }
+}
+/* legacy alias kept for any old references */
+@keyframes flip-glow-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ─── Board Detailed Mode — compact columns (desktop only) ─── */
+@media (min-width: 768px) {
+  .board-detailed-kanban .board-column > div:first-child {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    gap: 6px;
+  }
+  .board-detailed-kanban .board-column > div:first-child h2 {
+    font-size: 11px;
+  }
+}
+
+/* ─── Board Flip Cards (detailed mode, desktop only) ─── */
+@media (min-width: 768px) {
+  .board-flip-outer {
+    perspective: 600px;
+    cursor: grab;
+    height: 82px;
+    width: 100%;
+  }
+  .board-flip-outer:active { cursor: grabbing; }
+
+  .board-flip-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+  }
+  .board-flip-outer:hover .board-flip-inner {
+    transform: rotateY(180deg) scale(1.04);
+  }
+
+  .board-flip-front, .board-flip-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    overflow: hidden;
+  }
+  .board-flip-front {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    gap: 3px;
+  }
+  .board-flip-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+  }
+}

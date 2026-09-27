@@ -1,0 +1,244 @@
+/* Landing page: the cabinet's attract screen. Tokens come from index.css + styles/arcade.css. */
+
+/* Layered so Tailwind utilities (hidden, sm:inline-flex) keep working on these elements */
+@layer components {
+  .lp {
+    overflow-x: clip;
+  }
+
+  /* ─── Type ─── */
+  .lp-title {
+    font-size: clamp(2.5rem, 1rem + 4.2vw, 4.75rem);
+    line-height: 1;
+    text-wrap: balance;
+  }
+
+  .lp-title-accent {
+    color: var(--color-primary);
+  }
+
+  .dark .lp-title-accent {
+    color: var(--px-cyan);
+  }
+
+  .lp-close-title {
+    font-size: clamp(2.25rem, 1.2rem + 3.4vw, 4rem);
+    line-height: 1;
+  }
+
+  .lp-caret {
+    display: inline-block;
+    width: 0.5em;
+    height: 0.8em;
+    margin-left: 0.12em;
+    vertical-align: baseline;
+    background: var(--px-cyan);
+    animation: px-blink 1.1s steps(1, end) infinite;
+  }
+
+  /* ─── Controls ─── */
+  .lp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 40px;
+    padding: 0 0.875rem;
+    border: 2px solid transparent;
+    font-family: var(--font-hud);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    clip-path: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
+    transition: background-color 100ms steps(2, end), border-color 100ms steps(2, end), color 100ms steps(2, end);
+  }
+
+  .lp-btn:active {
+    transform: translateY(1px);
+  }
+
+  .lp-btn:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-ring);
+  }
+
+  .lp-btn-lg {
+    min-height: 52px;
+    padding: 0 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .lp-btn-primary {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  .lp-btn-ghost {
+    background: transparent;
+    border-color: var(--color-input);
+    color: var(--color-foreground);
+  }
+
+  .lp-btn-ghost[aria-pressed="true"] {
+    border-color: var(--color-ring);
+    color: var(--color-ring);
+  }
+
+  @media (hover: hover) {
+    .lp-btn-primary:hover,
+    .lp-btn-ghost:hover,
+    .lp-select:not(.is-active):hover {
+      border-color: var(--color-foreground);
+    }
+    .lp-navlink:hover {
+      color: var(--color-foreground);
+    }
+    .lp-textlink:hover {
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  .lp-kbd {
+    padding: 0 0.3rem;
+    border: 1px solid color-mix(in srgb, currentColor 55%, transparent);
+    font-size: 0.625rem;
+    line-height: 1rem;
+  }
+
+  .lp-navlink {
+    align-items: center;
+    min-height: 40px;
+    padding: 0 0.5rem;
+    color: var(--color-muted-foreground);
+  }
+
+  .lp-navlink:focus-visible,
+  .lp-textlink:focus-visible,
+  .lp-playfield:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  .lp-textlink {
+    color: var(--color-foreground);
+    text-decoration: underline;
+    text-decoration-color: var(--color-primary);
+    text-underline-offset: 4px;
+  }
+
+  /* ─── Playfield ─── */
+  .lp-playfield:focus-visible {
+    outline-offset: 4px;
+  }
+
+  .lp-tile {
+    border-color: color-mix(in srgb, var(--st) 35%, var(--color-border));
+    background: color-mix(in srgb, var(--color-background) 70%, transparent);
+    color: var(--color-muted-foreground);
+  }
+
+  .lp-tile.is-visited {
+    border-color: color-mix(in srgb, var(--st) 55%, var(--color-border));
+    color: var(--color-foreground);
+  }
+
+  .lp-tile.is-here {
+    border-color: var(--st);
+    background: color-mix(in srgb, var(--st) 16%, var(--color-card));
+    color: var(--st);
+  }
+
+  .lp-tile.is-pit {
+    border-style: dashed;
+  }
+
+  .lp-sprite {
+    transition: transform 420ms steps(7, end);
+  }
+
+  .lp-sprite-art {
+    transform: translateY(14px);
+    filter: drop-shadow(0 2px 0 var(--color-background));
+  }
+
+  .is-cleared .lp-sprite-art {
+    color: var(--px-gold);
+  }
+
+  .lp-banner {
+    animation: px-rise 240ms steps(3, end);
+  }
+
+  /* ─── Instruction card ─── */
+  .lp-card-section {
+    background: var(--color-muted);
+  }
+
+  .lp-move-icon {
+    color: var(--color-primary);
+  }
+
+  .dark .lp-move-icon {
+    color: var(--px-cyan);
+  }
+
+  /* ─── Mode select ─── */
+  .lp-select {
+    border-color: var(--color-input);
+    background: var(--color-card);
+  }
+
+  .lp-select.is-active {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, var(--color-card));
+  }
+
+  .lp-cursor {
+    color: var(--color-muted-foreground);
+  }
+
+  .lp-select.is-active .lp-cursor {
+    color: var(--color-primary);
+  }
+
+  .dark .lp-select.is-active .lp-cursor {
+    color: var(--px-cyan);
+  }
+
+  .lp-select:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-ring);
+  }
+
+  .lp-col {
+    border-color: var(--color-border);
+    border-top-color: var(--st);
+  }
+
+  .lp-card {
+    border-color: var(--color-border);
+    background: var(--color-background);
+  }
+
+  .lp-card.is-spot {
+    border-color: var(--st);
+    background: color-mix(in srgb, var(--st) 12%, var(--color-background));
+  }
+
+  /* ─── Close ─── */
+  .lp-close {
+    background: var(--color-card);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lp-caret,
+    .lp-banner {
+      animation: none;
+    }
+    .lp-sprite {
+      transition: none;
+    }
+  }
+}

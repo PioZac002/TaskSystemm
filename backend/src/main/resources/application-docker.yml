@@ -1,0 +1,19 @@
+# Profile used by docker-compose (SPRING_PROFILES_ACTIVE=docker).
+# Every value can be overridden with an environment variable from the root .env file.
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/tasksystem}
+    username: ${SPRING_DATASOURCE_USERNAME:tasksystem}
+    password: ${SPRING_DATASOURCE_PASSWORD:tasksystem}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  h2:
+    console:
+      enabled: false
+
+app:
+  demo:
+    seed: ${APP_DEMO_SEED:true}

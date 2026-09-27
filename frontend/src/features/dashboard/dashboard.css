@@ -1,0 +1,78 @@
+/* Dashboard: the cabinet HUD and level select. Tokens from index.css + styles/arcade.css. */
+
+/* Layered so Tailwind utilities (hidden, sm:inline-flex) keep working on these elements */
+@layer components {
+  .dash-mode {
+    color: var(--color-muted-foreground);
+    transition: color 100ms steps(2, end), background-color 100ms steps(2, end);
+  }
+
+  .dash-mode .dash-cursor {
+    visibility: hidden;
+  }
+
+  .dash-mode.is-active {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+
+  .dash-mode.is-active .dash-cursor {
+    visibility: visible;
+  }
+
+  .dash-mode:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-ring);
+  }
+
+  @media (hover: hover) {
+    .dash-mode:not(.is-active):hover,
+    .dash-link:hover {
+      color: var(--color-foreground);
+    }
+  }
+
+  .dash-link:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  .dash-glyph {
+    border-color: color-mix(in srgb, var(--st) 45%, var(--color-border));
+    background: color-mix(in srgb, var(--st) 12%, transparent);
+  }
+
+  .dash-stagebar > span {
+    display: block;
+    min-width: 4px;
+  }
+
+  .dash-skeleton {
+    animation: dash-skeleton 1.2s steps(2, end) infinite;
+  }
+
+  @keyframes dash-skeleton {
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Layout swap steps in on the pixel grid */
+  .dash-swap {
+    animation: dash-swap-in 180ms steps(3, end);
+  }
+
+  @keyframes dash-swap-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dash-swap,
+    .dash-skeleton {
+      animation: none;
+    }
+  }
+}
