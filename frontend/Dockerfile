@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1
 
 # ── Build: production bundle with Vite ─────────────────────────────────────────
-FROM node:22-alpine AS build
+# The bundle is static files, so it is always built natively ($BUILDPLATFORM).
+FROM --platform=$BUILDPLATFORM node:22-alpine AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./

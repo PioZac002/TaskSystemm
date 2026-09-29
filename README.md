@@ -10,6 +10,8 @@ This repository contains the whole stack:
 | REST API | Java 25, Spring Boot 4.1, Spring Security (JWT), JPA | [`backend/`](backend/) |
 | Database | PostgreSQL 17 (Docker), H2 for quick local runs | via [`docker-compose.yml`](docker-compose.yml) |
 
+**Live demo:** https://tasksystem-frontend-687047392177.europe-west1.run.app, hosted on Google Cloud (see [Deployment on Google Cloud](#deployment-on-google-cloud)). Use **Try the demo** on the login page. The first request after a quiet period can take 20-30 seconds while the backend starts.
+
 ![TaskSystem dashboard in dark mode](frontend/src/assets/dashboard-screen-dark.jpg)
 
 ---
@@ -18,6 +20,7 @@ This repository contains the whole stack:
 
 - [Features](#features)
 - [Quick start with Docker](#quick-start-with-docker)
+- [Deployment on Google Cloud](#deployment-on-google-cloud)
 - [Demo accounts](#demo-accounts)
 - [Configuration](#configuration)
 - [How it fits together](#how-it-fits-together)
@@ -92,6 +95,50 @@ Press `Ctrl+C` in the terminal, or from another terminal:
 docker compose down        # stops containers, keeps the database
 docker compose down -v     # stops containers AND deletes the database (fresh demo data next start)
 ```
+
+---
+
+## Deployment on Google Cloud
+
+The live demo runs the same two images as `docker compose`, split across managed services in `europe-west1`:
+
+| Part | Service | Notes |
+|---|---|---|
+| Web app | **Cloud Run** (`tasksystem-frontend`) | nginx serving the Vite build; `VITE_API_BASE_URL` points at the API |
+| REST API | **Cloud Run** (`tasksystem-backend`) | scales to zero; startup probe on `/actuator/health` |
+| Database | **Cloud SQL for PostgreSQL** | reached through the Cloud SQL Java Connector (`postgres-socket-factory`), no authorised networks |
+| Secrets | **Secret Manager** | database password and JWT secret, injected as environment variables |
+| Images | **Artifact Registry** | `europe-west1-docker.pkg.dev/<project>/tasksystem` |
+
+The API runs as its own service account with only `roles/cloudsql.client` and `roles/secretmanager.secretAccessor`.
+
+### Build the images
+
+Cloud Run needs `linux/amd64` images. Both Dockerfiles build their first stage on the host's native platform (`--platform=$BUILDPLATFORM`), so this works on Apple Silicon without emulating Maven or npm:
+
+```bash
+REGISTRY=europe-west1-docker.pkg.dev/<project>/tasksystem
+docker buildx build --platform linux/amd64 -t $REGISTRY/backend:v1 --push backend
+docker buildx build --platform linux/amd64 \
+  --build-arg VITE_API_BASE_URL=https://<backend-service-url> \
+  -t $REGISTRY/frontend:v1 --push frontend
+```
+
+### Deploy
+
+```bash
+gcloud run deploy tasksystem-backend --image=$REGISTRY/backend:v1 --region=europe-west1 \
+  --service-account=tasksystem-backend@<project>.iam.gserviceaccount.com \
+  --port=6901 --memory=1Gi --cpu-boost --min-instances=0 --allow-unauthenticated \
+  --set-env-vars="SPRING_PROFILES_ACTIVE=docker,SPRING_DATASOURCE_URL=jdbc:postgresql:///tasksystem?cloudSqlInstance=<project>:europe-west1:<instance>&socketFactory=com.google.cloud.sql.postgres.SocketFactory,SPRING_DATASOURCE_USERNAME=tasksystem,APP_DEMO_SEED=true,APP_CORS_ALLOWED_ORIGINS=https://<frontend-service-url>" \
+  --set-secrets="SPRING_DATASOURCE_PASSWORD=tasksystem-db-password:latest,APP_SECURITY_JWT_SECRET=tasksystem-jwt-secret:latest" \
+  --startup-probe="httpGet.path=/actuator/health,httpGet.port=6901,periodSeconds=5,timeoutSeconds=3,failureThreshold=48"
+
+gcloud run deploy tasksystem-frontend --image=$REGISTRY/frontend:v1 --region=europe-west1 \
+  --port=80 --memory=256Mi --min-instances=0 --allow-unauthenticated
+```
+
+The startup probe matters: Cloud Run only allocates CPU while a request is being handled, so without it the demo seed that runs after Spring Boot starts would stall until the first visitor arrives.
 
 ---
 
