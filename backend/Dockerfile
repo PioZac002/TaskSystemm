@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 
 # ── Build: compile the Spring Boot jar with the Maven wrapper ──────────────────
-FROM eclipse-temurin:25-jdk AS build
+# The jar is platform-independent, so it is always built natively ($BUILDPLATFORM).
+# Building for linux/amd64 on an Apple Silicon Mac then only emulates the runtime stage.
+FROM --platform=$BUILDPLATFORM eclipse-temurin:25-jdk AS build
 WORKDIR /workspace
 
 COPY .mvn/ .mvn/
